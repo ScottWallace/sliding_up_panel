@@ -162,7 +162,7 @@ class SlidingUpPanel extends StatefulWidget {
   /// Optional Size() constaints for area where sliding panel operates
   /// by default sliding panel uses MediaQuery to get the size for the area
   ///
-  final Size? outerSizeBounds;
+  final double? outerWidth;
 
   SlidingUpPanel(
       {Key? key,
@@ -201,7 +201,7 @@ class SlidingUpPanel extends StatefulWidget {
       this.defaultPanelState = PanelState.CLOSED,
       this.header,
       this.footer,
-      this.outerSizeBounds})
+      this.outerWidth})
       : assert(panel != null || panelBuilder != null),
         assert(0 <= backdropOpacity && backdropOpacity <= 1.0),
         assert(snapPoint == null || 0 < snapPoint && snapPoint < 1.0),
@@ -270,8 +270,8 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                   );
                 },
                 child: Container(
-                  height: getOuterDimensions().height,
-                  width: getOuterDimensions().width,
+                  height: getOuterWidth().height,
+                  width: getOuterWidth().width,
                   child: widget.body,
                 ),
               )
@@ -296,8 +296,8 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                     animation: _ac,
                     builder: (context, _) {
                       return Container(
-                        height: getOuterDimensions().height,
-                        width: getOuterDimensions().width,
+                        height: getOuterWidth().height,
+                        width: getOuterWidth().width,
 
                         //set color to null so that touch events pass through
                         //to the body when the panel is closed, otherwise,
@@ -344,7 +344,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                           bottom: widget.slideDirection == SlideDirection.DOWN
                               ? 0.0
                               : null,
-                          width: getOuterDimensions().width -
+                          width: getOuterWidth().width -
                               (widget.margin != null
                                   ? widget.margin!.horizontal
                                   : 0) -
@@ -393,7 +393,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                         bottom: widget.slideDirection == SlideDirection.DOWN
                             ? 0.0
                             : null,
-                        width: getOuterDimensions().width -
+                        width: getOuterWidth().width -
                             (widget.margin != null
                                 ? widget.margin!.horizontal
                                 : 0) -
@@ -430,12 +430,14 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
     super.dispose();
   }
 
-  Size getOuterDimensions() {
-    if (this.widget.outerSizeBounds != null) {
-      return this.widget.outerSizeBounds!;
+  Size getOuterWidth() {
+    Size size = MediaQuery.of(context).size;
+
+    if (this.widget.outerWidth != null) {
+      return Size(this.widget.outerWidth!, size.height);
     }
 
-    return MediaQuery.of(context).size;
+    return size;
   }
 
   double _getParallax() {
